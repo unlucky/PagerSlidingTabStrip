@@ -43,7 +43,7 @@ import java.util.Locale;
 
 import com.astuetz.pagerslidingtabstrip.R;
 
-public class PagerSlidingTabStrip extends HorizontalScrollView {
+public class PagerSlidingTabStrip extends HorizontalScrollView implements View.OnClickListener {
 
 	public interface IconTabProvider {
 		public int getPageIconResId(int position);
@@ -61,6 +61,7 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 
 	private final PageListener pageListener = new PageListener();
 	public OnPageChangeListener delegatePageListener;
+    private OnClickTabListener onClickTabListener;
 
 	private LinearLayout tabsContainer;
 	private ViewPager pager;
@@ -546,6 +547,32 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 	public int getTabPaddingLeftRight() {
 		return tabPadding;
 	}
+    
+    /**
+     * Set on click tab listener
+     * @param onClickTabListener
+     */
+    public void setOnClickTabListener(OnClickTabListener onClickTabListener) {
+        this.onClickTabListener = onClickTabListener;
+    }
+
+    /**
+     * Tab on click listener
+     */
+    public interface OnClickTabListener {
+        public void onClickTab(View tab, int index);
+    }
+
+    @Override
+    public void onClick(View v) {
+        int index = (Integer)v.getTag();
+        if (onClickTabListener != null) {
+            onClickTabListener.onClickTab(v, index);
+        }
+        if (pager != null) {
+            pager.setCurrentItem(index, true);
+        }
+    }
 
 	@Override
 	public void onRestoreInstanceState(Parcelable state) {
